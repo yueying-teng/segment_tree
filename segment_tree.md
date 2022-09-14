@@ -10,27 +10,28 @@ It generally has two operations:
     - `update(i, val)`: updates the value of the `i`-th item in the original array to `val`
     - `update(start, end, val)`: increase the value of items in range `[start, end]` in the original array by val
 
-<img src="./range_sum.png" height=300>
 
 ```
+        0  1  2  3  4  5  6  7
+nums = [5, 2, 6, 3, 7, 4, 1, 1]
 
-        0  1  2  3  4  5  6
-nums = [5, 2, 6, 3, 7, 4, 1]
 
-[range sum tree]
+range sum tree
 
-node range                                    [0:6]
-node val                                       28
+node range                                    [0:7]
+node val                                       29
 
-node range                [0:3]                               [4:6]
-node val                    16                                  12
+node range                [0:3]                               [4:7]
+node val                    16                                  13
 
-node range         [0:1]            [2:3]              [4:5]            [6:6]
-node val             7                9                  11                1
+node range         [0:1]            [2:3]              [4:5]            [6:7]
+node val             7                9                  11               2
 
-node range   [0:0]    [1:1]     [2:2]   [3:3]     [4:4]    [5:5]      
-node val       5        2         6       3         7        4              
+node range   [0:0]    [1:1]     [2:2]   [3:3]     [4:4]    [5:5]    [6:6]   [7:7]      
+node val       5        2         6       3         7        4        1       1
 
+
+range_sum_tree = {1: 29, 2: 16, 3: 13, 4: 7, 5: 9, 6: 11, 7: 2, 8: 5, 9: 2, 10: 6, 11: 3, 12: 7, 13: 4, 14: 1, 15: 1}
 ```
 
 ### Construction
