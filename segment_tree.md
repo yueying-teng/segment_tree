@@ -74,19 +74,40 @@ node val       5        2         6        3         7        4        1        
 
 **Update**
 Update shares the same logic as Query to traverse from the root node to the each of the leaf node covered in the given range `[start, end]`.
-When the leaf node is reached, its value in `val` is updated accordingly, which is then used to modify the value of its parent node when the return trip starts.
+When the leaf node is reached, its value in `val` is updated accordingly, which is then used to modify the value of all its parent nodes when the return trip starts.
 
 ### Lazy propagation
- 
+One drawback of the Update method above is that it's quit slow for range updates, since every single leaf node covered by the range has to be reached before an actual update can happen. 
 
-compare the runtime of updates w/ and w/ lazy propagation
+Lazy propagation solves this issue. Instead of going all the way down to every leaf node, it saves the value to be applied on all descendent nodes in the parent node, and will not carry out the update until the descendent nodes are actually accessed (e.g. when they are queried).
+
+In this way, only the nodes from the root node to that parent node are actually updated.
+
+e.g. `update(2, 3, delta=1)`
+
+'''
+node range                                    [0:7]
+node val                                       31 (prev=29)
+                                              idx=1
+
+node range                 [0:3]                               [4:7]
+node val                    18 (prev=16)                        13
+                          idx=2                                idx=3
+
+node range         [0:1]            [2:3]              [4:5]            [6:7]
+node val             7                11 (prev=9)       11                2
+                   idx=4            idx=5              idx=6            idx=7
+                                    lazy=2
+
+node range   [0:0]    [1:1]     [2:2]    [3:3]     [4:4]    [5:5]    [6:6]    [7:7]      
+node val       5        2         6        3         7        4        1        1
+            idx=8    idx=9     idx=10    idx=11   idx=12    idx=13   idx=14   idx=15
+'''
 
 
 ### More advanced topics 
 Higher dimensional segment tree
 
 ### Application 
-
 1. Supports custom value calculation 
 2. Fast range queries  
-    - Segment trees support searching for all the intervals that contain a query point in time O(log n + k), k being the number of retrieved intervals or segments.
