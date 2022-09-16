@@ -77,9 +77,9 @@ Update shares the same logic as Query to traverse from the root node to the each
 When the leaf node is reached, its value in `val` is updated accordingly, which is then used to modify the value of all its parent nodes when the return trip starts.
 
 ### Lazy propagation
-One drawback of the Update method above is that it's quit slow for range updates, since every single leaf node covered by the range has to be reached before an actual update can happen. 
+One drawback of the Update method above is that it's quit slow for range updates, since every single leaf node covered by the range has to be reached before an actual update can happen. Plus, this also leads to multiple visits to their common ancestors.
 
-Lazy propagation solves this issue. Instead of going all the way down to every leaf node, it saves the value to be applied on all descendent nodes in the parent node, and will not carry out the update until the descendent nodes are actually accessed (e.g. when they are queried).
+Lazy propagation solves this issue. Instead of going all the way down to every leaf node, it saves the value to be applied on all descendent nodes in the parent node, and will not carry out the update until the descendent nodes are actually accessed (e.g. when they are queried or updated again).
 
 In this way, only the nodes from the root node to that parent node are actually updated.
 
@@ -97,7 +97,6 @@ node val                    18 (prev=16)                        13
 node range         [0:1]            [2:3]              [4:5]            [6:7]
 node val             7                11 (prev=9)       11                2
                    idx=4            idx=5              idx=6            idx=7
-                                    lazy=2
 
 node range   [0:0]    [1:1]     [2:2]    [3:3]     [4:4]    [5:5]    [6:6]    [7:7]      
 node val       5        2         6        3         7        4        1        1
