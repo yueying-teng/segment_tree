@@ -97,7 +97,7 @@ an update happens is unnecessary if the descendent nodes are never queried.
 
 e.g. `update(2, 3, delta=1)`
 
-'''
+```
 node range                                    [0:7]
 node val                                       31 (prev=29)
                                               idx=1
@@ -114,12 +114,12 @@ node range   [0:0]    [1:1]     [2:2]    [3:3]     [4:4]    [5:5]    [6:6]    [7
 node val       5        2         6        3         7        4        1        1
             idx=8    idx=9     idx=10    idx=11   idx=12    idx=13   idx=14   idx=15
                                lazy=1    lazy=1        
-'''
+```
 
 
 e.g. `query(2, 2)`
 
-'''
+```
 node range                                    [0:7]
 node val                                       31  
                                               idx=1
@@ -136,7 +136,7 @@ node range   [0:0]    [1:1]     [2:2]    [3:3]     [4:4]    [5:5]    [6:6]    [7
 node val       5        2         7        3         7        4        1        1
             idx=8    idx=9     idx=10    idx=11   idx=12    idx=13   idx=14   idx=15
                                lazy=0    lazy=1        
-'''
+```
 
 
 ### More advanced topics 
