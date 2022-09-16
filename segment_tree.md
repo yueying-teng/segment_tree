@@ -44,15 +44,14 @@ This is built with two steps:
 
 Continue from the range sum segment tree above, querying here means returning the sum of all items in the given range `[start, end]`. 
 
-This can be done recursively from the root node. In each step, check for overlap between the node's range and the given range and decide on the subtree to continue the recursion. There are four cases:
-1. given range is entirely in the left subtree of the current node
-    - e.g. `given range = [0: 3], current node idx = 1`
-2. given range is entirely in the right subtree of the current node
-    - e.g. `given range = [4: 7], current node idx = 1`
-3. given range spans across two subtrees of the current node
-    - e.g. `given range = [1: 2], current node idx = 2`
-4. given range is identical to current node's range
-    - return the current node's value as the final result
+This can be done recursively from the root node. In each step, check for overlap between the current node's range and 
+the given range and decide on whether to continue the recursion. There are three cases:
+1. given range does not overlap with the current node's range
+    - e.g. `given range = [9: 9], current node idx = 1`
+2. current node's range is a subset of the given range 
+    - e.g. `given range = [2: 4], current node idx = 5`
+3. given range is a subset of the current node's range 
+    - e.g. `given range = [6: 7], current node idx = 3`
 
 ```
 node range                                    [0:7]
@@ -73,15 +72,28 @@ node val       5        2         6        3         7        4        1        
 ```
 
 **Update**
-Update shares the same logic as Query to traverse from the root node to the each of the leaf node covered in the given range `[start, end]`.
-When the leaf node is reached, its value in `val` is updated accordingly, which is then used to modify the value of all its parent nodes when the return trip starts.
+
+Update shares the same logic as Query to carry out the traversal from the root node.
+The difference here is that each leaf node in the range `[start, end]` has to be updated independently.
+(Unlike query, queried value is returned once the appropriate node range is found)
 
 ### Lazy propagation
-One drawback of the Update method above is that it's quit slow for range updates, since every single leaf node covered by the range has to be reached before an actual update can happen. Plus, this also leads to multiple visits to their common ancestors.
+One drawback of the Update method above is that it's quite slow for range updates, 
+since every single leaf node covered by the range has to be reached before an actual update can happen. 
+Plus, this also leads to multiple repeated visits to their common ancestors.
 
-Lazy propagation solves this issue. Instead of going all the way down to every leaf node, it saves the value to be applied on all descendent nodes in the parent node, and will not carry out the update until the descendent nodes are actually accessed (e.g. when they are queried or updated again).
+Lazy propagation solves this issue. 
+As the name implies, node updates happen lazily here, which means that update of the descendent nodes are postponed,
+until the descendent nodes themselves are accessed (e.g. when they are queried or updated again).
 
-In this way, only the nodes from the root node to that parent node are actually updated.
+This is done by using another list (dictionary), `lazy`, that saves the value to be applied to the descendent nodes.
+`lazy[i]` holds the value by which the node `val[i]` needs to be incremented, when node `i` is finally accessed or queried. 
+
+In this way, during the traversal, once it's found that the current node's range is a subset of the search range,
+ only the nodes from the root node to that current node are actually updated. 
+This makes sense. 
+Image a range that is frequently updated, but rarely queried; updating the descendent nodes whenever 
+an update happens is unnecessary if the descendent nodes are never queried. 
 
 e.g. `update(2, 3, delta=1)`
 
@@ -101,6 +113,29 @@ node val             7                11 (prev=9)       11                2
 node range   [0:0]    [1:1]     [2:2]    [3:3]     [4:4]    [5:5]    [6:6]    [7:7]      
 node val       5        2         6        3         7        4        1        1
             idx=8    idx=9     idx=10    idx=11   idx=12    idx=13   idx=14   idx=15
+                               lazy=1    lazy=1        
+'''
+
+
+e.g. `query(2, 2)`
+
+'''
+node range                                    [0:7]
+node val                                       31  
+                                              idx=1
+
+node range                 [0:3]                               [4:7]
+node val                    18                                   13
+                          idx=2                                idx=3
+
+node range         [0:1]            [2:3]              [4:5]            [6:7]
+node val             7                11                11                2
+                   idx=4            idx=5              idx=6            idx=7
+
+node range   [0:0]    [1:1]     [2:2]    [3:3]     [4:4]    [5:5]    [6:6]    [7:7]      
+node val       5        2         7        3         7        4        1        1
+            idx=8    idx=9     idx=10    idx=11   idx=12    idx=13   idx=14   idx=15
+                               lazy=0    lazy=1        
 '''
 
 

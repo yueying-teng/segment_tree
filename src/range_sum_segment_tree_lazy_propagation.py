@@ -31,7 +31,8 @@ class RangeSumSegmentTree:
 
         # current node has previous updates, stored in lazy, that have not been applied 
         if self.lazy[index] != 0:     
-            self.val[index] += (r - l + 1) * self.lazy[index]  # apply previous updates
+            # apply previous updates to the current node
+            self.val[index] += (r - l + 1) * self.lazy[index]  
             # postpone its child nodes' update
             if l != r:
                 self.lazy[2 * index] += self.lazy[index]     
@@ -52,13 +53,14 @@ class RangeSumSegmentTree:
         """
         node information: l, r, index
         interval to be updated: [start, end]
-        delta: changes to be applied on all items in the range above  
+        delta: changes to be applied to all items in the range above  
         """
-         
+        # [update left from before] 
         # current node has previous updates, stored in lazy, that have not been applied 
         if self.lazy[index] != 0:     
-            self.val[index] += (r - l + 1) * self.lazy[index]  # apply previous updates
-            # postpone its child nodes' update
+            # apply previous updates to the current node
+            self.val[index] += (r - l + 1) * self.lazy[index]  
+            # postpone its child nodes' update (by updating their lazy values)
             if l != r:
                 self.lazy[2 * index] += self.lazy[index]     
                 self.lazy[2 * index + 1] += self.lazy[index]
@@ -68,9 +70,13 @@ class RangeSumSegmentTree:
         if end < l or r < start:
             return 
 
-        # full overlap, update current node's and child nodes' values
+        # [update from the current call]
+        # current node's range is a subset of the given search range, 
         if start <= l <= r <= end:
+            # update current node's value 
             self.val[index] += (r - l + 1) * delta
+            # postpone updating the value of its descendent nodes 
+            # (by updating their lazy values instead)
             if l != r:
                 self.lazy[2 * index] += delta 
                 self.lazy[2 * index + 1] += delta 
