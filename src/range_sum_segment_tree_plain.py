@@ -20,10 +20,10 @@ class RangeSumSegmentTree:
     
     def query(self, start, end, l, r, index=1):
         """
-		node information: l, r, index
+        node information: l, r, index
         interval being queried for range sum: [start, end]
-		"""
-		
+        """
+        
         if start == l and end == r:
             return self.val[index] 
             
@@ -39,11 +39,11 @@ class RangeSumSegmentTree:
         
     def update(self, start, end, l, r, index=1, delta=1):
         """
-		node information: l, r, index
+        node information: l, r, index
         interval to be updated: [start, end]
         delta: changes to be applied on all items in the range above  
-		"""
-		
+        """
+        
         if start == l and end == r:
             self.val[index] += delta # update current node's val
             return  
