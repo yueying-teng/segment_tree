@@ -41,17 +41,13 @@ class RangeSumSegmentTree:
 
         if start <= l <= r <= end:
             return self.val[index]
-            
-        m = (l + r) // 2
-
-        if end <= m: # target range completely in the left subtree
-            return self.query(start, end, l, m, 2 * index)
-        elif start >= m + 1:
-            return self.query(start, end, m + 1, r, 2 * index + 1)
         else:
-            return self.query(start, m, l, m, 2 * index) + \
-                   self.query(m + 1, end, m + 1, r, 2 * index + 1)
-        
+            m = (l + r) // 2
+
+            return self.query(start, end, l, m, 2 * index) + \
+                    self.query(start, end, m + 1, r, 2 * index + 1)
+    
+
     def update(self, start, end, l, r, index=1, delta=1):
         """
         node information: l, r, index
@@ -95,11 +91,6 @@ print({k: v for k, v in sorted(tree.val.items(), key=lambda x: x[0])})
 
 l, r = 0, len(nums) - 1 # root node's range
 
-queries = [[2, 3], [0, 5], [4, 4]]
-for start, end in queries:
-    print(start, end)
-    print(tree.query(start, end, l=l, r=r))
-
 updates = [[2, 3], [3, 5], [0, 7], [4, 4]]
 for start, end in updates:
     print(start, end)
@@ -109,7 +100,5 @@ for start, end in updates:
     
     print('query range', start, start)
     print(tree.query(start, start, l=l, r=r))
+    print('lazy', tree.lazy)
     print('tree', {k: v for k, v in sorted(tree.val.items(), key=lambda x: x[0])})
-
-
-

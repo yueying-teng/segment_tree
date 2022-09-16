@@ -24,44 +24,42 @@ class RangeSumSegmentTree:
         interval being queried for range sum: [start, end]
         """
         
-        if start == l and end == r:
-            return self.val[index] 
-            
-        m = (l + r) // 2
+        # search range does not overlap with the node's range
+        if end < l or r < start:
+            return 0
 
-        if end <= m: # target range completely in the left subtree
-            return self.query(start, end, l, m, 2 * index)
-        elif start >= m + 1:  # target range completely in the right subtree
-            return self.query(start, end, m + 1, r, 2 * index + 1)
-        else: # target range spans across two subtrees
-            return self.query(start, m, l, m, 2 * index) + \
-                   self.query(m + 1, end, m + 1, r, 2 * index + 1)
-        
+        # current node's range is inside the given range 
+        if start <= l <= r <= end:
+            return self.val[index] 
+        else:
+            m = (l + r) // 2
+
+            return self.query(start, end, l, m, 2 * index) + \
+                   self.query(start, end, m + 1, r, 2 * index + 1)
+            
     def update(self, start, end, l, r, index=1, delta=1):
         """
         node information: l, r, index
         interval to be updated: [start, end]
         delta: changes to be applied on all items in the range above  
         """
-        
-        if start == l and end == r:
+
+        # search range does not overlap with the node's range
+        if end < l or r < start:
+            return 
+
+        # current node's range is inside the given range 
+        if start <= l <= r <= end:
             self.val[index] += delta # update current node's val
-            return  
+            return 
+        else:
+            # recurse deeper to find the appropriate node
+            m = (l + r) // 2
 
-        m = (l + r) // 2
-
-        if end <= m: # target range completely in the left subtree
             self.update(start, end, l, m, 2 * index, delta)
-        elif start >= m + 1:
             self.update(start, end, m + 1, r, 2 * index + 1, delta)
-        else: 
-            self.update(start, m, l, m, 2 * index, delta)
-            self.update(m + 1, end, m + 1, r, 2 * index + 1, delta)
-
-        self.val[index] = self.val[2 * index] + self.val[2 * index + 1]
- 
-        return  
-
+        
+            self.val[index] = self.val[2 * index] + self.val[2 * index + 1]
 
 
 nums = [5, 2, 6, 3, 7, 4, 1, 1]
@@ -81,4 +79,3 @@ for start, end in updates:
         print(i, i)
         tree.update(i, i, l=l, r=r)
         print({k: v for k, v in sorted(tree.val.items(), key=lambda x: x[0])})
-
