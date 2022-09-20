@@ -66,8 +66,8 @@ the given range to decide how recursion should continue. There are three cases:
 
 e.g. `query(1, 3)`
 <p float="left">
-  <img src='./img_src/query_range_1_3_00.png' height=300>
-  <img src='./img_src/query_range_1_3_01.png' height=300>
+  <img src='./img_src/query_range_1_3_00.png' height=350>
+  <img src='./img_src/query_range_1_3_01.png' height=350>
 </p>
 
 **Update**
@@ -78,23 +78,7 @@ This guarantees that each item covered by the range is updated correspondingly.
 (Unlike query, queried value is returned once the appropriate node range is found)
 
 e.g. `update(0, 3, delta=1)`
-```
-node range                                    [0:7]
-node val                                      33(prev=29)
-                                              idx=1
-
-node range                  [0:3]                               [4:7]
-node val                    20(prev=16)                          13
-                           idx=2                                idx=3
-
-node range         [0:1]            [2:3]              [4:5]            [6:7]
-node val            9(prev=7)       11(prev=9)           11               2
-                   idx=4            idx=5              idx=6            idx=7
-
-node range   [0:0]    [1:1]     [2:2]    [3:3]     [4:4]    [5:5]    [6:6]    [7:7]      
-node val     6(5)      3(2)      7(6)     4(3)       7        4        1        1
-            idx=8    idx=9     idx=10    idx=11   idx=12    idx=13   idx=14   idx=15
-```
+<img src='./img_src/update_range_0_3.png' height=350>
 
 One drawback of the Update method above is that it's quite slow (O(nlogm)) for large ranges, 
 since every single leaf node covered by the range has to be reached before an actual update can happen. 
@@ -115,25 +99,7 @@ an update happens is unnecessary if the descendent nodes are never queried.
 
 e.g. `update(0, 3, delta=1)`
 
-```
-node range                                    [0:7]
-node val                                       33 (prev=29)
-                                              idx=1
-
-node range                 [0:3]                               [4:7]
-node val                    20 (prev=16)                        13
-                          idx=2                                idx=3
-
-node range         [0:1]            [2:3]              [4:5]            [6:7]
-node val             7                11                 11                2
-                   idx=4            idx=5              idx=6            idx=7
-                   lazy=1           lazy=1    
-
-node range   [0:0]    [1:1]     [2:2]    [3:3]     [4:4]    [5:5]    [6:6]    [7:7]      
-node val       5        2         6        3         7        4        1        1
-            idx=8    idx=9     idx=10    idx=11   idx=12    idx=13   idx=14   idx=15    
-```
-
+<img src='./img_src/update_range_0_3_lazily.png' height=350>
 
 e.g. `query(0, 1)`
 
